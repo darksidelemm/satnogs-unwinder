@@ -30,7 +30,7 @@ To move to home location, run it with:
 $ python unwind.py --home_azimuth=0.0 --home_elevation=0.0
 ```
 
-By default we assume the movement will take less than 180 seconds. If your rotator takes longer than this to move (?!), then use the `--movement_timeout` parameter to set a different timeout.
+By default we assume the movement will take less than 180 seconds. If your rotator takes longer than this to move (?!), then use the `--homing_timeout` parameter to set a different timeout.
 
 
 To move to the starting point of the next observation for your SatNOGS station, add on the --station_id=X argument, i.e.:

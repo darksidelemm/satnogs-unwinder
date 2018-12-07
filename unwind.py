@@ -174,8 +174,6 @@ def get_next_rise_azimuth(station_id=1, dev=False):
     _dev = "-dev" if dev else ""
     _request_url = "https://network%s.satnogs.org/api/observations/?ground_station=%d&vetted_status=unknown" % (_dev, station_id)
 
-    # https://network.satnogs.org/api/observations/?ground_station=232&vetted_status=unknown
-
     try:
         _r = requests.get(_request_url)
         _obs = _r.json()
@@ -198,6 +196,7 @@ def get_next_rise_azimuth(station_id=1, dev=False):
     # If we don't find one that's sooner than one day ahead, just go to the home position.
     _earliest_obs_time = datetime.datetime.now(tzutc()) + datetime.timedelta(1)
     _rise_az = None
+    _obs_info = None
 
     for _o in _obs:
         _start = parse(_o['start'])
@@ -205,8 +204,11 @@ def get_next_rise_azimuth(station_id=1, dev=False):
         if _start < _earliest_obs_time:
             _earliest_obs_time = _start
             _rise_az = _o['rise_azimuth']
+            _obs_info = _o
 
     _time_to_obs = (_earliest_obs_time - datetime.datetime.now(tzutc())).total_seconds()
+
+    logging.info("Next observation (#%d) rises at %.1f degrees, in %.1f minutes." % (_obs_info['id'], _rise_az, _time_to_obs/60.0))
 
     return (_rise_az, _time_to_obs)
 
@@ -238,7 +240,6 @@ if __name__ == "__main__":
                 logging.critical("Next observation is only %s seconds away! Not enough time to move..." % _time_to_obs)
                 sys.exit(0)
 
-            logging.info("Next observation rises at %.1f degrees, in %.1f minutes." % (_rise_az, _time_to_obs/60.0))
             _home_az = _rise_az
 
         else:
