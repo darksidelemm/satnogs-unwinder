@@ -286,8 +286,8 @@ if __name__ == "__main__":
             # Move anticlockwise.
             _new_az = _az - args.azimuth_step
 
-            if _new_az < home_az:
-                _new_az = home_az
+            if _new_az < _home_az:
+                _new_az = _home_az
 
         # Now modulo the new target azimuth so that we can send it to the rotator.
         _new_az = _new_az % 360.0

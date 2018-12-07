@@ -65,6 +65,8 @@ If you can get a value below 0 degrees, or above 360 degrees, then this script s
 
 There are still situations it may make sense to start a pass in an overwind region, and then progress into the 'normal' region during a pass. I hope to add better support for these kinds of passes in the future.
 
+If you add observations in between the current and next observation, this script won't be called, and as such you won't get the benefit of it. No worse than the usual behaviour though.
+
 You may also encounter very bad behaviour if there is only a very short time between passes and your rotator takes too long to move. The `movement_timeout` argument, and the checking for close observations does help with this, but there may still be edge cases. Having two programs attempting to control one rotator is bad and may cause you to have a bad observation, or a bad day. 
 
 As per the GPL:
