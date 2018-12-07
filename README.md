@@ -13,7 +13,7 @@ Unfortunately, this behaviour can lead to the rotator ending up in a 'wound-up' 
 
 This problem has been discussed in a satnogs-client [issue](https://gitlab.com/librespacefoundation/satnogs/satnogs-client/issues/275), and I've suggested a fix in the LibreSpace [forum](https://community.libre.space/t/rotator-control-parking/2511/2?u=vk5qi). As a means of testing out a possible solution, I've created the `unwind.py` script in this directory. It's not an ideal solution, but it's a starting point.
 
-In short, since we can read the absolute rotator position from the Rot2Prog, we can move to a desired absolute position by moving in a sequence of small steps. I'm using steps of 90 degrees. Thic can be used to move back to a 'home' location, or even better - move to the start of the next observation!
+In short, since we can read the absolute rotator position from the Rot2Prog, we can move to a desired absolute position by moving in a sequence of small steps. I'm using steps of 90 degrees. This can be used to move back to a 'home' location, or even better - move to the start of the next observation!
 
 SatNOGS provides the handy `SATNOGS_POST_OBSERVATION_SCRIPT` option, which can be used to run a shell script after an observation has finished (duh). We run a script there which will move the rotator to the start of the next observation ahead of time, or alternatively move to a home location if there are no observations in the near (1 day) future.
 
@@ -37,7 +37,7 @@ To move to the starting point of the next observation for your SatNOGS station, 
 ```
 $ python unwind.py --home_azimuth=0.0 --home_elevation=0.0 --station_id=232
 ```
-If there is no upcoming observation, the rotator will be moved to the home location. If the observation is closer in time than the movement timeout, then we will bomb out and not attempt to move. If your station is on network-dev, then add `--network_dev`.
+If there is no upcoming observation, the rotator will be moved to the home location. If the observation is closer in time than the movement timeout, then the script will bomb out and not attempt to move. If your station is on network-dev, then add `--network_dev`.
 
 By default, we assume that there is a rotctld instance running on localhost:4533. If it's running elsewhere, then the `--rotctld_host` and `--rotctld_port` options can change this. 
 
