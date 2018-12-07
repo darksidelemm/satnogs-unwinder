@@ -194,19 +194,20 @@ def get_next_rise_azimuth(station_id=1, dev=False):
 
     # Observations are not always provided in time-sorted order, so we need to search for the earliest one.
     # If we don't find one that's sooner than one day ahead, just go to the home position.
-    _earliest_obs_time = datetime.datetime.now(tzutc()) + datetime.timedelta(1)
+    _next_obs_time = datetime.datetime.now(tzutc()) + datetime.timedelta(1)
+    _earliest_obs_time = datetime.datetime.now(tzutc()) + datetime.timedelta(0,60)
     _rise_az = None
     _obs_info = None
 
     for _o in _obs:
         _start = parse(_o['start'])
 
-        if _start < _earliest_obs_time:
-            _earliest_obs_time = _start
+        if (_start < _next_obs_time) and (_start > _earliest_obs_time):
+            _next_obs_time = _start
             _rise_az = _o['rise_azimuth']
             _obs_info = _o
 
-    _time_to_obs = (_earliest_obs_time - datetime.datetime.now(tzutc())).total_seconds()
+    _time_to_obs = (_next_obs_time - datetime.datetime.now(tzutc())).total_seconds()
 
     logging.info("Next observation (#%d) rises at %.1f degrees, in %.1f minutes." % (_obs_info['id'], _rise_az, _time_to_obs/60.0))
 
