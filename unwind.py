@@ -22,7 +22,7 @@ import sys
 from dateutil.parser import parse
 from dateutil.tz import *
 
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 class ROTCTLD(object):
     """ rotctld (hamlib) communication class """
@@ -209,13 +209,17 @@ def get_next_rise_azimuth(station_id=1, dev=False):
 
     _time_to_obs = (_next_obs_time - datetime.datetime.now(tzutc())).total_seconds()
 
-    logging.info("Next observation (#%d) rises at %.1f degrees, in %.1f minutes." % (_obs_info['id'], _rise_az, _time_to_obs/60.0))
-
-    return (_rise_az, _time_to_obs)
+    if _obs_info is not None:
+        logging.info("Next observation (#%d) rises at %.1f degrees, in %.1f minutes." % (_obs_info['id'], _rise_az, _time_to_obs/60.0))
+        return (_rise_az, _time_to_obs)
+    else:
+        logging.info("No scheduled observations found.")
+        return (None, None)
 
 
 
 if __name__ == "__main__":
+
     # Read in command line arguments.
     parser = argparse.ArgumentParser()
     parser.add_argument('--station_id', type=int, default=-1, help="SatNOGS Station ID")
@@ -227,7 +231,14 @@ if __name__ == "__main__":
     parser.add_argument('--movement_threshold', type=float, default=10.0, help="Movement threshold. Default = 10 degrees")
     parser.add_argument('--rotctld_host', type=str, default="127.0.0.1", help="rotctld hostname. Default=127.0.0.1")
     parser.add_argument('--rotctld_port', type=int, default=4533, help="rotctld port. Default=4533")
+    parser.add_argument('--log', type=str, default='/tmp/rotator.log', help="Log file. Default=/tmp/rotator.log")
     args = parser.parse_args()
+
+    logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', filename=args.log, level=logging.DEBUG)
+    stdout_format = logging.Formatter('%(asctime)s %(levelname)s:%(message)s')
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setFormatter(stdout_format)
+    logging.getLogger().addHandler(stdout_handler)
 
     _home_az = args.home_azimuth
     _home_el = args.home_elevation

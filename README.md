@@ -51,6 +51,9 @@ python /home/pi/satnogs-unwinder/unwind.py --home_azimuth=0.0 --home_elevation=0
 
 Run `python unwind.py --help` to see information on all the command-line options.
 
+## Logging
+A log file will be written to `/tmp/rotator.log` when the script is run. Note that SatNOGS runs as its own user, and must have permissions to write to this file. The easy solution here is to just be sure that the file doesn't exist when unwind.py is run via the post-observation method for the first time.
+
 ## Warnings
 This script is a fairly quick hack, and will bomb out if there are any errors.
 
