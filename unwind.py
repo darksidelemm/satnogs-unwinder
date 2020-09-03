@@ -172,7 +172,7 @@ def get_next_rise_azimuth(station_id=1, dev=False):
     '''
 
     _dev = "-dev" if dev else ""
-    _request_url = "https://network%s.satnogs.org/api/observations/?ground_station=%d&vetted_status=unknown" % (_dev, station_id)
+    _request_url = "https://network%s.satnogs.org/api/observations/?ground_station=%d&status=future" % (_dev, station_id)
 
     try:
         _r = requests.get(_request_url)
