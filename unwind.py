@@ -174,22 +174,36 @@ def get_next_rise_azimuth(station_id=1, dev=False):
     _dev = "-dev" if dev else ""
     _request_url = "https://network%s.satnogs.org/api/observations/?ground_station=%d&status=future" % (_dev, station_id)
 
-    try:
-        _r = requests.get(_request_url)
-        _obs = _r.json()
-    except Exception as e:
-        logging.error("Error getting next observation info - %s" % str(e))
-        return (None, None)
+    _more_data = True
+    _obs = []
+    while _more_data:
+        try:
+            _r = requests.get(_request_url)
+            _obs_temp = _r.json()
+        except Exception as e:
+            logging.error("Error getting next observation info - %s" % str(e))
+            return (None, None)
 
-    # The network API returns a list of observation objects.
-    if type(_obs) is not list:
-        logging.error("SatNOGS API did not return expected list.")
-        return (None, None)
+        # The network API returns a list of observation objects.
+        if type(_obs_temp) is not list:
+            logging.error("SatNOGS API did not return expected list.")
+            return (None, None)
 
-    # Check that there are actually some observations to look at.
-    if len(_obs) == 0:
-        logging.info("No scheduled observations found.")
-        return (None, None)
+        # Check that there are actually some observations to look at.
+        if len(_obs_temp) == 0:
+            logging.info("No scheduled observations found.")
+            return (None, None)
+
+        # Append obs
+        for _x in _obs_temp:
+            _obs.append(_x)
+        logging.debug("Appended %d observations to list." % (len(_obs_temp)))
+
+        # Check if there is another page of data, if there is run another request.
+        if 'next' in _r.links:
+            _request_url = _r.links['next']['url']
+        else:
+            _more_data = False
     
 
     # Observations are not always provided in time-sorted order, so we need to search for the earliest one.
