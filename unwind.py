@@ -194,9 +194,8 @@ def get_next_rise_azimuth(station_id=1, dev=False):
             logging.info("No scheduled observations found.")
             return (None, None)
 
-        # Append obs
-        for _x in _obs_temp:
-            _obs.append(_x)
+        # Extend obs list
+        _obs.extend(_obs_temp)
         logging.debug("Appended %d observations to list." % (len(_obs_temp)))
 
         # Check if there is another page of data, if there is run another request.
